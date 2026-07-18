@@ -1,0 +1,592 @@
+#pragma version 10
+
+
+
+
+
+
+
+
+
+
+
+txn ApplicationID
+!
+int 6
+*
+txn OnCompletion
++
+switch *call_NoOp *NOT_IMPLEMENTED *NOT_IMPLEMENTED *NOT_IMPLEMENTED *NOT_IMPLEMENTED *NOT_IMPLEMENTED *create_NoOp *NOT_IMPLEMENTED *NOT_IMPLEMENTED *NOT_IMPLEMENTED *NOT_IMPLEMENTED *NOT_IMPLEMENTED
+
+*NOT_IMPLEMENTED:
+
+	err
+
+
+*abi_route_createApplication:
+
+	txna ApplicationArgs 3
+	btoi
+
+
+	txna ApplicationArgs 2
+	btoi
+
+
+	txna ApplicationArgs 1
+	btoi
+
+
+	callsub createApplication
+	int 1
+	return
+
+
+createApplication:
+	proto 3 0
+
+
+
+	byte 0x6d616e61676572
+	txn Sender
+	app_global_put
+
+
+
+	byte 0x6d6f6e74686c79436f6e747269627574696f6e
+	frame_dig -1
+	app_global_put
+
+
+
+	byte 0x6d616e61676572436f6d6d697373696f6e50657263656e74
+	frame_dig -2
+	app_global_put
+
+
+
+	byte 0x746f74616c4d656d62657273
+	frame_dig -3
+	app_global_put
+
+
+
+	byte 0x63757272656e744d6f6e7468
+	int 0
+	app_global_put
+
+
+
+	byte 0x6368697456616c7565
+	frame_dig -1
+	frame_dig -3
+	*
+	app_global_put
+
+
+
+	byte 0x6973416374697665
+	int 0
+	app_global_put
+	retsub
+
+
+*abi_route_addMember:
+
+	txna ApplicationArgs 1
+	dup
+	len
+	int 32
+	==
+
+
+	assert
+
+
+	callsub addMember
+	int 1
+	return
+
+
+addMember:
+	proto 1 0
+
+
+	byte 0x
+
+
+
+	txn Sender
+	byte 0x6d616e61676572
+	app_global_get
+	==
+	assert
+
+
+
+	byte 0x6973416374697665
+	app_global_get
+	int 0
+	==
+	assert
+
+
+
+	byte 0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+	frame_bury 0
+	retsub
+
+
+*abi_route_removeMember:
+
+	txna ApplicationArgs 1
+	dup
+	len
+	int 32
+	==
+
+
+	assert
+
+
+	callsub removeMember
+	int 1
+	return
+
+
+removeMember:
+	proto 1 0
+
+
+
+	txn Sender
+	byte 0x6d616e61676572
+	app_global_get
+	==
+	assert
+
+
+
+	byte 0x6973416374697665
+	app_global_get
+	int 0
+	==
+	assert
+	retsub
+
+
+*abi_route_startChit:
+
+	callsub startChit
+	int 1
+	return
+
+
+startChit:
+	proto 0 0
+
+
+
+	txn Sender
+	byte 0x6d616e61676572
+	app_global_get
+	==
+	assert
+
+
+
+	byte 0x6973416374697665
+	app_global_get
+	int 0
+	==
+	assert
+
+
+
+	byte 0x6973416374697665
+	int 1
+	app_global_put
+
+
+
+	byte 0x63757272656e744d6f6e7468
+	int 1
+	app_global_put
+	retsub
+
+
+*abi_route_contribute:
+
+	callsub contribute
+	int 1
+	return
+
+
+contribute:
+	proto 0 0
+
+
+
+	byte 0x6973416374697665
+	app_global_get
+	int 1
+	==
+	assert
+
+
+
+
+
+
+	txn GroupIndex
+	int 1
+	-
+	store 248
+
+
+	load 248
+	gtxns TypeEnum
+	int pay
+	==
+
+
+	assert
+
+
+	load 248
+	gtxns Receiver
+	global CurrentApplicationAddress
+	==
+
+
+	assert
+
+
+	load 248
+	gtxns Amount
+	byte 0x6d6f6e74686c79436f6e747269627574696f6e
+	app_global_get
+	==
+
+
+	assert
+	retsub
+
+
+*abi_route_submitBid:
+
+	txna ApplicationArgs 1
+	btoi
+
+
+	callsub submitBid
+	int 1
+	return
+
+
+submitBid:
+	proto 1 0
+
+
+
+	byte 0x6973416374697665
+	app_global_get
+	int 1
+	==
+	assert
+
+
+
+	frame_dig -1
+	int 30
+	<=
+	assert
+	retsub
+
+
+*abi_route_distributePot:
+
+	txna ApplicationArgs 2
+	btoi
+
+
+	txna ApplicationArgs 1
+	dup
+	len
+	int 32
+	==
+
+
+	assert
+
+
+	callsub distributePot
+	int 1
+	return
+
+
+distributePot:
+	proto 2 0
+
+
+	byte 0x
+	dupn 2
+
+
+
+	txn Sender
+	byte 0x6d616e61676572
+	app_global_get
+	==
+	assert
+
+
+
+	byte 0x6973416374697665
+	app_global_get
+	int 1
+	==
+	assert
+
+
+
+	byte 0x6368697456616c7565
+	app_global_get
+	frame_dig -2
+	*
+	int 100
+	/
+	frame_bury 0
+
+
+
+	byte 0x6368697456616c7565
+	app_global_get
+	frame_dig 0
+	-
+	frame_bury 1
+
+
+
+	frame_dig 0
+	byte 0x6d616e61676572436f6d6d697373696f6e50657263656e74
+	app_global_get
+	*
+	int 100
+	/
+	frame_bury 2
+
+
+
+
+
+
+	itxn_begin
+	int pay
+	itxn_field TypeEnum
+
+
+
+	frame_dig -1
+	itxn_field Receiver
+
+
+
+	frame_dig 1
+	itxn_field Amount
+
+
+	int 0
+	itxn_field Fee
+
+
+	itxn_submit
+
+
+
+
+	frame_dig 2
+	int 0
+	>
+	bz *if0_end
+
+
+
+
+
+
+
+	itxn_begin
+	int pay
+	itxn_field TypeEnum
+
+
+
+	byte 0x6d616e61676572
+	app_global_get
+	itxn_field Receiver
+
+
+
+	frame_dig 2
+	itxn_field Amount
+
+
+	int 0
+	itxn_field Fee
+
+
+	itxn_submit
+
+*if0_end:
+
+
+	byte 0x63757272656e744d6f6e7468
+	dup
+	app_global_get
+	int 1
+	+
+	app_global_put
+
+
+
+
+	byte 0x63757272656e744d6f6e7468
+	app_global_get
+	byte 0x746f74616c4d656d62657273
+	app_global_get
+	>
+	bz *if1_end
+
+
+
+
+	byte 0x6973416374697665
+	int 0
+	app_global_put
+
+*if1_end:
+	retsub
+
+
+*abi_route_getCurrentMonth:
+
+	byte 0x151f7c75
+
+
+	callsub getCurrentMonth
+	itob
+	concat
+	log
+	int 1
+	return
+
+
+getCurrentMonth:
+	proto 0 1
+
+
+
+	byte 0x63757272656e744d6f6e7468
+	app_global_get
+	retsub
+
+
+*abi_route_getChitStatus:
+
+	byte 0x151f7c75
+
+
+	callsub getChitStatus
+	itob
+	concat
+	log
+	int 1
+	return
+
+
+getChitStatus:
+	proto 0 1
+
+
+
+	byte 0x6973416374697665
+	app_global_get
+	retsub
+
+
+*abi_route_pauseChit:
+
+	callsub pauseChit
+	int 1
+	return
+
+
+pauseChit:
+	proto 0 0
+
+
+
+	txn Sender
+	byte 0x6d616e61676572
+	app_global_get
+	==
+	assert
+
+
+
+	byte 0x6973416374697665
+	int 0
+	app_global_put
+	retsub
+
+
+*abi_route_resumeChit:
+
+	callsub resumeChit
+	int 1
+	return
+
+
+resumeChit:
+	proto 0 0
+
+
+
+	txn Sender
+	byte 0x6d616e61676572
+	app_global_get
+	==
+	assert
+
+
+
+	byte 0x6973416374697665
+	int 1
+	app_global_put
+	retsub
+
+*create_NoOp:
+	method "createApplication(uint64,uint64,uint64)void"
+	txna ApplicationArgs 0
+	match *abi_route_createApplication
+
+
+	err
+
+*call_NoOp:
+	method "addMember(address)void"
+	method "removeMember(address)void"
+	method "startChit()void"
+	method "contribute()void"
+	method "submitBid(uint64)void"
+	method "distributePot(address,uint64)void"
+	method "getCurrentMonth()uint64"
+	method "getChitStatus()uint64"
+	method "pauseChit()void"
+	method "resumeChit()void"
+	txna ApplicationArgs 0
+	match *abi_route_addMember *abi_route_removeMember *abi_route_startChit *abi_route_contribute *abi_route_submitBid *abi_route_distributePot *abi_route_getCurrentMonth *abi_route_getChitStatus *abi_route_pauseChit *abi_route_resumeChit
+
+
+	err
